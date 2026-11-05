@@ -22,17 +22,10 @@ export default function menu() {
       )}
 
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[450px]">
-
-        {/* glass container */}
         <div className="w-full rounded-2xl bg-[#080b14]/60 backdrop-blur-3xl border border-white/[0.06] shadow-2xl shadow-black/70 overflow-hidden ring-1 ring-inset ring-white/[0.04]">
 
           {/* dropup links */}
-          <div
-            className={`
-              transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
-              ${open ? "max-h-[340px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"}
-            `}
-          >
+          <div className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "max-h-[340px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}>
             <div className="flex flex-col px-6 pt-6 pb-4 gap-1">
               {links.map((link, i) => (
                 <Link
@@ -41,17 +34,28 @@ export default function menu() {
                   onClick={() => { setActive(link.label); setOpen(false); }}
                   style={{ transitionDelay: open ? `${i * 50}ms` : "0ms" }}
                   className={`
-                    group relative w-fit text-[2rem] font-semibold tracking-tight leading-snug
+                    group relative w-fit overflow-hidden
+                    text-[2rem] font-semibold tracking-tight leading-snug
                     transition-all duration-300
                     ${open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
-                    ${active === link.label ? "text-white" : "text-white/40 hover:text-white/80"}
+                    ${active === link.label ? "text-white" : "text-white/40"}
                   `}
                 >
-                  {link.label}
-                  <span className={`
-                    absolute -bottom-0.5 left-0 h-px bg-white/60 transition-all duration-300
-                    ${active === link.label ? "w-full" : "w-0 group-hover:w-full"}
-                  `} />
+                  {/* visible text — slides up on hover */}
+                  <span className="block transition-transform duration-300 ease-out group-hover:-translate-y-full">
+                    {link.label}
+                  </span>
+                  {/* duplicate — comes from below on hover */}
+                  <span
+                    aria-hidden
+                    className={`
+                      absolute inset-0 block translate-y-full
+                      transition-transform duration-300 ease-out group-hover:translate-y-0
+                      ${active === link.label ? "text-white" : "text-white/80"}
+                    `}
+                  >
+                    {link.label}
+                  </span>
                 </Link>
               ))}
             </div>
@@ -63,7 +67,6 @@ export default function menu() {
             {/* logo */}
             <div className="flex items-center justify-center px-5 text-white">
               <span className="relative flex items-center justify-center w-9 h-9">
-                {/* eye smoke particles */}
                 <span className="absolute inset-0 pointer-events-none" aria-hidden="true">
                   {[...Array(6)].map((_, i) => (
                     <i
@@ -80,12 +83,7 @@ export default function menu() {
                     />
                   ))}
                 </span>
-                <svg
-                  viewBox="0 0 736 736"
-                  width="36"
-                  height="36"
-                  className="relative z-10"
-                >
+                <svg viewBox="0 0 736 736" width="36" height="36" className="relative z-10">
                   <title>Suho eyes</title>
                   <defs>
                     <mask id="suho-eye-cutout" x="0" y="0" width="736" height="736" maskUnits="userSpaceOnUse">
@@ -98,7 +96,7 @@ export default function menu() {
               </span>
             </div>
 
-            {/* active label — grows to fill space */}
+            {/* active label */}
             <div className="flex-1 text-center text-sm font-medium text-white/50 tracking-widest uppercase select-none">
               {active}
             </div>
@@ -109,20 +107,8 @@ export default function menu() {
               aria-label="toggle menu"
               className="group flex flex-col gap-[5px] px-5 h-full justify-center cursor-pointer"
             >
-              <span
-                className={`
-                  block h-[1.5px] w-5 bg-white/80 rounded-full
-                  transition-all duration-300 ease-out
-                  ${open ? "translate-x-0" : "group-hover:-translate-x-1.5"}
-                `}
-              />
-              <span
-                className={`
-                  block h-[1.5px] w-5 bg-white/80 rounded-full
-                  transition-all duration-300 ease-out
-                  ${open ? "translate-x-0" : "group-hover:translate-x-1.5"}
-                `}
-              />
+              <span className={`block h-[1.5px] w-5 bg-white/80 rounded-full transition-all duration-300 ease-out ${open ? "translate-x-0" : "group-hover:-translate-x-1.5"}`} />
+              <span className={`block h-[1.5px] w-5 bg-white/80 rounded-full transition-all duration-300 ease-out ${open ? "translate-x-0" : "group-hover:translate-x-1.5"}`} />
             </button>
           </div>
         </div>
