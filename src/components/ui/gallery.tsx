@@ -196,11 +196,13 @@ export default function MorphGallery({
   tuning.current = { duration, noiseScale, edge, drift, reduced }
 
   const request = React.useRef<{ from: number; to: number } | null>(null)
+  const wakeGL = React.useRef<(() => void) | null>(null)
   const previous = React.useRef(active)
   React.useEffect(() => {
     if (previous.current === active) return
     request.current = { from: previous.current, to: active }
     previous.current = active
+    wakeGL.current?.()
   }, [active])
 
   const sources = items.map((i) => i.src).join("\n")
@@ -216,30 +218,47 @@ export default function MorphGallery({
     let buffer: WebGLBuffer | null = null
     const textures: (WebGLTexture | null)[] = items.map(() => null)
     const aspects: number[] = items.map(() => 1)
-    let raf = 0, disposed = false
+    let raf = 0, disposed = false, visible = false
     let from = active, to = active, progress = 1, startedAt = 0, direction = 1
 
-    const onLost = (e: Event) => { e.preventDefault(); cancelAnimationFrame(raf) }
+    const onLost = (e: Event) => { e.preventDefault(); cancelAnimationFrame(raf); raf = 0 }
     const onRestored = () => setGeneration((g) => g + 1)
     canvas.addEventListener("webglcontextlost", onLost)
     canvas.addEventListener("webglcontextrestored", onRestored)
 
+    let resizeTimer = 0
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       const w = Math.round(canvas.clientWidth * dpr)
       const h = Math.round(canvas.clientHeight * dpr)
       if (w === 0 || h === 0 || (canvas.width === w && canvas.height === h)) return
       canvas.width = w; canvas.height = h
       gl.viewport(0, 0, w, h)
+      wake()
     }
-    const observer = new ResizeObserver(resize)
-    observer.observe(canvas)
+    const debouncedResize = () => {
+      clearTimeout(resizeTimer)
+      resizeTimer = window.setTimeout(resize, 50)
+    }
+    const resizeObserver = new ResizeObserver(debouncedResize)
+    resizeObserver.observe(canvas)
+
+    // stop all GPU work when scrolled out of view
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting
+        if (visible) wake()
+        else { cancelAnimationFrame(raf); raf = 0 }
+      },
+      { threshold: 0 }
+    )
+    visibilityObserver.observe(canvas)
 
     let uniforms: Record<string, WebGLUniformLocation | null> = {}
     const pick = (i: number) => textures[i] ?? textures.find((t) => t) ?? null
 
-    const draw = () => {
-      if (disposed) return
+    const draw = (): boolean => {
+      if (disposed) return false
       const t = tuning.current
       const pending = request.current
       if (pending) {
@@ -256,7 +275,7 @@ export default function MorphGallery({
         progress = span === 0 ? 1 : easeInOutQuint(Math.min((performance.now() - startedAt) / span, 1))
       }
       const fromTex = pick(from); const toTex = pick(to)
-      if (!fromTex || !toTex) return
+      if (!fromTex || !toTex) return false
       gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, fromTex); gl.uniform1i(uniforms.from, 0)
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, toTex); gl.uniform1i(uniforms.to, 1)
       gl.uniform1f(uniforms.progress, progress)
@@ -268,9 +287,26 @@ export default function MorphGallery({
       gl.uniform1f(uniforms.edge, Math.max(t.edge, 0.001))
       gl.uniform1f(uniforms.drift, t.drift)
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+      // still animating if transition is in progress
+      return progress < 1
     }
 
-    const frame = () => { draw(); raf = requestAnimationFrame(frame) }
+    const frame = () => {
+      const animating = draw()
+      // only keep the loop alive while transitioning; idle otherwise
+      if (animating) {
+        raf = requestAnimationFrame(frame)
+      } else {
+        raf = 0
+      }
+    }
+
+    // kick off a render pass on demand — only when visible
+    const wake = () => {
+      if (raf || disposed || !visible) return
+      raf = requestAnimationFrame(frame)
+    }
+    wakeGL.current = wake
 
     const start = async () => {
       try {
@@ -299,7 +335,7 @@ export default function MorphGallery({
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
             textures[i] = tex
             aspects[i] = img.naturalWidth / Math.max(img.naturalHeight, 1)
-            if (!running) { running = true; resize(); setReady(true); raf = requestAnimationFrame(frame) }
+            if (!running) { running = true; resize(); setReady(true); wake() }
           }, () => {
             refused += 1
             if (refused === items.length && !disposed) setFailed(true)
@@ -310,7 +346,10 @@ export default function MorphGallery({
     void start()
 
     return () => {
-      disposed = true; cancelAnimationFrame(raf); observer.disconnect()
+      disposed = true; cancelAnimationFrame(raf); raf = 0
+      resizeObserver.disconnect(); visibilityObserver.disconnect()
+      clearTimeout(resizeTimer)
+      wakeGL.current = null
       canvas.removeEventListener("webglcontextlost", onLost)
       canvas.removeEventListener("webglcontextrestored", onRestored)
       for (const tex of textures) if (tex) gl.deleteTexture(tex)
@@ -323,7 +362,9 @@ export default function MorphGallery({
 
   React.useEffect(() => {
     if (!autoplay || reduced || paused || items.length < 2) return
-    const id = window.setInterval(() => go(active + 1), Math.max(autoplay, 600))
+    const id = window.setInterval(() => {
+      if (wakeGL.current) go(active + 1) // only advance if GL is alive
+    }, Math.max(autoplay, 600))
     return () => window.clearInterval(id)
   }, [autoplay, reduced, paused, active, go, items.length])
 

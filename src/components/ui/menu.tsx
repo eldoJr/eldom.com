@@ -35,11 +35,11 @@ export default function menu() {
         <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
       )}
 
-      <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[450px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${footerVisible ? "opacity-0 translate-y-4 pointer-events-none" : "opacity-100 translate-y-0"}`}>
+      <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[450px] transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[opacity,transform] ${footerVisible ? "opacity-0 translate-y-4 pointer-events-none" : "opacity-100 translate-y-0"}`}>
         <div className="w-full rounded-2xl bg-[#080b14]/60 backdrop-blur-3xl border border-white/[0.06] shadow-2xl shadow-black/70 overflow-hidden ring-1 ring-inset ring-white/[0.04]">
 
           {/* dropup links */}
-          <div className={`transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "max-h-[340px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}>
+          <div className={`transition-[max-height,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "max-h-[340px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}>
             <div className="flex flex-col px-6 pt-6 pb-4 gap-1">
               {links.map((link, i) => (
                 <Link
@@ -50,7 +50,7 @@ export default function menu() {
                   className={`
                     group relative w-fit overflow-hidden
                     text-[2rem] font-semibold tracking-tight leading-snug
-                    transition-all duration-300
+                    transition-[opacity,transform] duration-300
                     ${open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
                     ${active === link.label ? "text-white" : "text-white/40"}
                   `}
@@ -93,6 +93,7 @@ export default function menu() {
                         left: `${10 + Math.cos(i) * 8}px`,
                         animationDelay: `${i * 0.2}s`,
                         animationDuration: `${1.5 + i * 0.3}s`,
+                        animationPlayState: open ? "running" : "paused",
                       }}
                     />
                   ))}
@@ -121,8 +122,8 @@ export default function menu() {
               aria-label="toggle menu"
               className="group flex flex-col gap-[5px] px-5 h-full justify-center cursor-pointer"
             >
-              <span className={`block h-[1.5px] w-5 bg-white/80 rounded-full transition-all duration-300 ease-out ${open ? "translate-x-0" : "group-hover:-translate-x-1.5"}`} />
-              <span className={`block h-[1.5px] w-5 bg-white/80 rounded-full transition-all duration-300 ease-out ${open ? "translate-x-0" : "group-hover:translate-x-1.5"}`} />
+              <span className={`block h-[1.5px] w-5 bg-white/80 rounded-full transition-transform duration-300 ease-out ${open ? "translate-x-0" : "group-hover:-translate-x-1.5"}`} />
+              <span className={`block h-[1.5px] w-5 bg-white/80 rounded-full transition-transform duration-300 ease-out ${open ? "translate-x-0" : "group-hover:translate-x-1.5"}`} />
             </button>
           </div>
         </div>

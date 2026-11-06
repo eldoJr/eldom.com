@@ -17,7 +17,7 @@ export default function Experience() {
     <section ref={ref as React.RefObject<HTMLElement>} id="experience" className="relative z-10 bg-white py-24 rounded-b-[1.5rem]">
 
       <h2
-        className="px-10 md:px-20 text-4xl md:text-6xl font-bold tracking-tight text-neutral-900 mb-20 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+        className="px-10 md:px-20 text-4xl md:text-6xl font-bold tracking-tight text-neutral-900 mb-20 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[opacity,transform]"
         style={{ opacity: inView ? 1 : 0, transform: inView ? "none" : "translateY(24px)" }}
       >
         Worked with<sup className="text-2xl md:text-3xl font-semibold ml-1">({EXPERIENCES.length})</sup>
@@ -27,7 +27,7 @@ export default function Experience() {
         {EXPERIENCES.map((e, i) => (
           <div
             key={i}
-            className="transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            className="transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[opacity,transform]"
             style={{
               opacity: inView ? 1 : 0,
               transform: inView ? "none" : "translateY(20px)",
@@ -44,7 +44,7 @@ export default function Experience() {
           </div>
         ))}
         <hr
-          className="border-neutral-200 ml-10 md:ml-20 transition-all duration-700"
+          className="border-neutral-200 ml-10 md:ml-20 transition-opacity duration-700"
           style={{ opacity: inView ? 1 : 0, transitionDelay: `${150 + EXPERIENCES.length * 80}ms` }}
         />
       </div>

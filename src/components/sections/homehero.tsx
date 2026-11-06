@@ -102,7 +102,7 @@ export default function hero() {
           href="/resume.pdf"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-medium text-white/70 hover:text-white border border-white/20 hover:border-white/50 px-4 py-2 rounded-lg backdrop-blur-sm transition-all duration-300"
+          className="text-sm font-medium text-white/70 hover:text-white border border-white/20 hover:border-white/50 px-4 py-2 rounded-lg backdrop-blur-sm transition-[color,border-color] duration-300"
         >
           Resume
         </a>

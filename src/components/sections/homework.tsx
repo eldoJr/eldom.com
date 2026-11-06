@@ -13,7 +13,7 @@ const ITEMS = [
 ]
 
 const fade = (inView: boolean, delay = 0) =>
-  `transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`
+  `transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${inView ? "opacity-100" : "opacity-0"}`
   + ` [transition-delay:${delay}ms]`
 
 export default function Work() {
@@ -31,8 +31,8 @@ export default function Work() {
       </div>
 
       {/* gallery */}
-      <div className={fade(inView, 200) + " px-10 md:px-20 pb-10"}>
-        <div className="mx-auto max-w-5xl rounded-2xl overflow-hidden">
+      <div className={fade(inView, 200) + " px-10 md:px-20 pb-10 will-change-[opacity]"}>
+        <div className="mx-auto max-w-5xl rounded-2xl overflow-hidden contain-layout">
           <MorphGallery items={ITEMS} height="65vh" autoplay={4500} />
         </div>
       </div>
