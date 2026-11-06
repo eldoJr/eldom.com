@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSection } from "@/lib/section";
 
@@ -16,6 +16,18 @@ export default function menu() {
   const [open, setOpen] = useState(false);
   const { section, setSection } = useSection();
   const active = section;
+  const [footerVisible, setFooterVisible] = useState(false);
+
+  useEffect(() => {
+    const footer = document.querySelector("footer");
+    if (!footer) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setFooterVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <>
@@ -23,7 +35,7 @@ export default function menu() {
         <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
       )}
 
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[450px]">
+      <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[450px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${footerVisible ? "opacity-0 translate-y-4 pointer-events-none" : "opacity-100 translate-y-0"}`}>
         <div className="w-full rounded-2xl bg-[#080b14]/60 backdrop-blur-3xl border border-white/[0.06] shadow-2xl shadow-black/70 overflow-hidden ring-1 ring-inset ring-white/[0.04]">
 
           {/* dropup links */}

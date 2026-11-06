@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "@/styles/globals.css";
 import Menu from "@/components/ui/menu";
+import Footer from "@/components/footer";
 import { SectionProvider } from "@/lib/section";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
@@ -17,6 +18,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
       <body>
         <SectionProvider>
           {children}
+          <Footer />
           <Menu />
         </SectionProvider>
       </body>
