@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSection } from "@/lib/section";
 
 const links = [
   { label: "Home", href: "/" },
@@ -13,7 +14,8 @@ const links = [
 
 export default function menu() {
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState("Home");
+  const { section, setSection } = useSection();
+  const active = section;
 
   return (
     <>
@@ -31,7 +33,7 @@ export default function menu() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  onClick={() => { setActive(link.label); setOpen(false); }}
+                  onClick={() => { setSection(link.label as Parameters<typeof setSection>[0]); setOpen(false); }}
                   style={{ transitionDelay: open ? `${i * 50}ms` : "0ms" }}
                   className={`
                     group relative w-fit overflow-hidden
