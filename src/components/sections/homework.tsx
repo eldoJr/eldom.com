@@ -1,7 +1,9 @@
 "use client"
 
-import MorphGallery from "@/components/ui/gallery"
+import dynamic from "next/dynamic"
 import { useInView } from "@/lib/useinview"
+
+const MorphGallery = dynamic(() => import("@/components/ui/gallery"), { ssr: false })
 
 const ITEMS = [
   { src: "https://cdn.21st.dev/assets/mirror/ec/eceae69f56b5b3e29b9372032b5c22e96bd5fc9c167ce072813868aa871d52af.jpg", thumb: "https://cdn.21st.dev/assets/mirror/69/69dbb246d917da410f7e79e87e53aaf6302023baa9db05f1075fca5bcb255410.jpg", alt: "Sun rays through a forest", title: "Forest Light", preview: "https://example.com", github: "https://github.com/eldoJr" },

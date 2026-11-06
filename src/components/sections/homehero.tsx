@@ -1,14 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import GradientWaves from "@/components/ui/waves";
+import dynamic from "next/dynamic";
 import Typewriter from "@/components/ui/typewriter";
 import { useSection } from "@/lib/section";
 import { useEffect, useRef, useState } from "react";
-import { animate, stagger } from "motion/react";
 
-const E = [0.16, 1, 0.3, 1] as const;
-const D = 1.2;
+const GradientWaves = dynamic(() => import("@/components/ui/waves"), { ssr: false });
+
+const D = 1200; // ms
+const EASE_OUT = "cubic-bezier(0.16,1,0.3,1)";
+const EASE_IN  = "cubic-bezier(0.4,0,1,1)";
 
 type SectionKey = "Home" | "About" | "Work" | "Shorts" | "Contact";
 
@@ -37,38 +39,39 @@ const content: Record<SectionKey, { lines: string[]; sub: string; typewords?: st
   },
 };
 
-export default function hero() {
+export default function Hero() {
   const { section } = useSection();
   const [displayed, setDisplayed] = useState<SectionKey>(section as SectionKey);
   const scopeRef = useRef<HTMLDivElement>(null);
-  const prevSection = useRef<SectionKey>(section as SectionKey);
 
   useEffect(() => {
     if (!scopeRef.current) return;
     const el = scopeRef.current;
 
     const run = async () => {
-      // slide out current lines down
-      await animate(el.querySelectorAll("[data-line]"),
-        { y: "105%" },
-        { duration: 0.35, ease: [0.4, 0, 1, 1], delay: stagger(0.04) }
+      const lines = Array.from(el.querySelectorAll<HTMLElement>("[data-line]"));
+
+      // slide out
+      await Promise.all(
+        lines.map((line, i) =>
+          line.animate(
+            [{ transform: "translateY(0%)" }, { transform: "translateY(105%)" }],
+            { duration: 350, delay: i * 40, easing: EASE_IN, fill: "forwards" }
+          ).finished
+        )
       );
 
-      // swap content
       setDisplayed(section as SectionKey);
-      prevSection.current = section as SectionKey;
-
-      // wait a frame for new content to render
       await new Promise(r => setTimeout(r, 30));
 
-      // reset to below
-      animate(el.querySelectorAll("[data-line]"), { y: "105%" }, { duration: 0 });
-
-      // slide in new lines
-      animate(el.querySelectorAll("[data-line]"),
-        { y: "0%" },
-        { duration: D, ease: E, delay: stagger(0.1) }
-      );
+      // reset + slide in on new content
+      el.querySelectorAll<HTMLElement>("[data-line]").forEach((line, i) => {
+        line.style.transform = "translateY(105%)";
+        line.animate(
+          [{ transform: "translateY(105%)" }, { transform: "translateY(0%)" }],
+          { duration: D, delay: i * 100, easing: EASE_OUT, fill: "forwards" }
+        );
+      });
     };
 
     run();
@@ -111,33 +114,28 @@ export default function hero() {
       {/* content */}
       <div ref={scopeRef} className="relative z-10 px-10 md:px-20 max-w-5xl">
 
-        {/* headline lines */}
         {c.lines.map((line, i) => (
           <div key={`${displayed}-${i}`} className="overflow-hidden">
             <div
               data-line
-              className={`${i === 0 ? "text-white/50" : "text-white/50"} text-4xl md:text-6xl tracking-tight ${i === 0 ? "mb-2" : ""}`}
+              className={`text-white/50 text-4xl md:text-6xl tracking-tight ${i === 0 ? "mb-2" : ""}`}
               style={{ transform: "translateY(105%)" }}
             >
               {i === 0 ? (
                 <span dangerouslySetInnerHTML={{ __html: line.replace(/Eldo\.|me\.|built\.|shorts\.|connect\./, (m) => `<strong class="font-bold text-white">${m}</strong>`) }} />
               ) : (
-                <span>
-                  {line}{c.typewords && <> <Typewriter words={c.typewords} /></>}
-                </span>
+                <span>{line}{c.typewords && <> <Typewriter words={c.typewords} /></>}</span>
               )}
             </div>
           </div>
         ))}
 
-        {/* sub line */}
         <div className="overflow-hidden mt-4">
           <div data-line className="text-[18px] text-white/40 max-w-sm leading-relaxed" style={{ transform: "translateY(105%)" }}>
             {c.sub}
           </div>
         </div>
 
-        {/* scroll indicator — home only */}
         {displayed === "Home" && (
           <div className="overflow-hidden mt-8">
             <div data-line className="flex items-center gap-3" style={{ transform: "translateY(105%)" }}>
