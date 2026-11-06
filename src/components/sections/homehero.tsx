@@ -1,14 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import Typewriter from "@/components/ui/typewriter";
 import { useSection } from "@/lib/section";
 import { useEffect, useRef, useState } from "react";
 
-const GradientWaves = dynamic(() => import("@/components/ui/waves"), { ssr: false });
-
-const D = 1200; // ms
+const D = 1200;
 const EASE_OUT = "cubic-bezier(0.16,1,0.3,1)";
 const EASE_IN  = "cubic-bezier(0.4,0,1,1)";
 
@@ -43,15 +40,25 @@ export default function Hero() {
   const { section } = useSection();
   const [displayed, setDisplayed] = useState<SectionKey>(section as SectionKey);
   const scopeRef = useRef<HTMLDivElement>(null);
+  const isMounted = useRef(false);
 
   useEffect(() => {
     if (!scopeRef.current) return;
     const el = scopeRef.current;
 
+    const slideIn = () => {
+      el.querySelectorAll<HTMLElement>("[data-line]").forEach((line, i) => {
+        line.style.transform = "translateY(105%)";
+        line.animate(
+          [{ transform: "translateY(105%)" }, { transform: "translateY(0%)" }],
+          { duration: D, delay: i * 100, easing: EASE_OUT, fill: "forwards" }
+        );
+      });
+    };
+
     const run = async () => {
       const lines = Array.from(el.querySelectorAll<HTMLElement>("[data-line]"));
 
-      // slide out
       await Promise.all(
         lines.map((line, i) =>
           line.animate(
@@ -63,16 +70,15 @@ export default function Hero() {
 
       setDisplayed(section as SectionKey);
       await new Promise(r => setTimeout(r, 30));
-
-      // reset + slide in on new content
-      el.querySelectorAll<HTMLElement>("[data-line]").forEach((line, i) => {
-        line.style.transform = "translateY(105%)";
-        line.animate(
-          [{ transform: "translateY(105%)" }, { transform: "translateY(0%)" }],
-          { duration: D, delay: i * 100, easing: EASE_OUT, fill: "forwards" }
-        );
-      });
+      slideIn();
     };
+
+    // first mount — just slide in, no slide-out needed
+    if (!isMounted.current) {
+      isMounted.current = true;
+      slideIn();
+      return;
+    }
 
     run();
   }, [section]);
@@ -81,23 +87,14 @@ export default function Hero() {
 
   return (
     <section id="hero" className="sticky top-0 min-h-screen flex items-center overflow-hidden">
-      <div className="absolute inset-0">
-        <GradientWaves
-          horizonColor="#5227FF"
-          waveColor="#FF9FFC"
-          crestColor="#ffffff"
-          backgroundColor="#080b14"
-          tilt={64}
-          amplitude={2.5}
-          speed={0.4}
-          relief={1}
-          grain={0.2}
-          intro
-          mouseInteraction
-          swellOnClick
-        />
-      </div>
-
+      {/* bg image */}
+      <img
+        src="https://cdn.21st.dev/assets/mirror/a8/a8cf38f65f7315f95eba8c803c4a80a9d78cb2ea36fbfee49828396e4a0b9737.jpg"
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+        aria-hidden
+      />
+      <div className="pointer-events-none absolute inset-0 ring-1 ring-black/30" aria-hidden />
       {/* top bar */}
       <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-8 py-6">
         <Image src="/logo-w.svg" alt="logo" width={22} height={22} />
@@ -113,7 +110,6 @@ export default function Hero() {
 
       {/* content */}
       <div ref={scopeRef} className="relative z-10 px-10 md:px-20 max-w-5xl">
-
         {c.lines.map((line, i) => (
           <div key={`${displayed}-${i}`} className="overflow-hidden">
             <div

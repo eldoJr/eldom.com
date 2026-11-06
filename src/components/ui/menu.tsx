@@ -2,20 +2,17 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { useSection } from "@/lib/section";
 
-const links = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "#about" },
-  { label: "Work", href: "#work" },
-  { label: "Shorts", href: "#shorts" },
-  { label: "Contact", href: "#contact" },
-];
+const links = ["Home", "About", "Work", "Shorts", "Contact"] as const;
 
 export default function menu() {
   const [open, setOpen] = useState(false);
   const { section, setSection } = useSection();
   const active = section;
+  const router = useRouter();
+  const pathname = usePathname();
   const [footerVisible, setFooterVisible] = useState(false);
 
   useEffect(() => {
@@ -43,32 +40,37 @@ export default function menu() {
             <div className="flex flex-col px-6 pt-6 pb-4 gap-1">
               {links.map((link, i) => (
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => { setSection(link.label as Parameters<typeof setSection>[0]); setOpen(false); }}
+                  key={link}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSection(link as Parameters<typeof setSection>[0]);
+                    setOpen(false);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                    if (pathname !== "/") router.push("/");
+                  }}
                   style={{ transitionDelay: open ? `${i * 50}ms` : "0ms" }}
                   className={`
                     group relative w-fit overflow-hidden
                     text-[2rem] font-semibold tracking-tight leading-snug
                     transition-[opacity,transform] duration-300
                     ${open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
-                    ${active === link.label ? "text-white" : "text-white/40"}
+                    ${active === link ? "text-white" : "text-white/40"}
                   `}
                 >
                   {/* visible text — slides up on hover */}
                   <span className="block transition-transform duration-300 ease-out group-hover:-translate-y-full">
-                    {link.label}
+                    {link}
                   </span>
-                  {/* duplicate — comes from below on hover */}
                   <span
                     aria-hidden
                     className={`
                       absolute inset-0 block translate-y-full
                       transition-transform duration-300 ease-out group-hover:translate-y-0
-                      ${active === link.label ? "text-white" : "text-white/80"}
+                      ${active === link ? "text-white" : "text-white/80"}
                     `}
                   >
-                    {link.label}
+                    {link}
                   </span>
                 </Link>
               ))}
