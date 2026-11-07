@@ -9,7 +9,7 @@ const D = 1200;
 const EASE_OUT = "cubic-bezier(0.16,1,0.3,1)";
 const EASE_IN  = "cubic-bezier(0.4,0,1,1)";
 
-type SectionKey = "Home" | "About" | "Work" | "Shorts" | "Contact";
+type SectionKey = "Home" | "About" | "Work" | "Contact";
 
 const content: Record<SectionKey, { lines: string[]; sub: string; typewords?: string[] }> = {
   Home: {
@@ -26,10 +26,6 @@ const content: Record<SectionKey, { lines: string[]; sub: string; typewords?: st
     lines: ["Things I've built."],
     sub: "A collection of projects, experiments, and ideas turned into reality.",
   },
-  Shorts: {
-    lines: ["Quick shorts."],
-    sub: "Bite-sized content, thoughts, and creative edits.",
-  },
   Contact: {
     lines: ["Let's connect."],
     sub: "Have a project in mind or just want to say hi? I'm always open to a good conversation.",
@@ -40,7 +36,20 @@ export default function Hero() {
   const { section } = useSection();
   const [displayed, setDisplayed] = useState<SectionKey>(section as SectionKey);
   const scopeRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
   const isMounted = useRef(false);
+  const [darkOverlay, setDarkOverlay] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const hero = heroRef.current;
+      if (!hero) return;
+      const vh = hero.offsetHeight;
+      setDarkOverlay(Math.min(1, window.scrollY / vh));
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (!scopeRef.current) return;
@@ -86,7 +95,7 @@ export default function Hero() {
   const c = content[displayed];
 
   return (
-    <section id="hero" className="sticky top-0 min-h-screen flex items-center overflow-hidden">
+    <section ref={heroRef} id="hero" className="sticky top-0 min-h-screen flex items-center overflow-hidden">
       {/* bg image */}
       <img
         src="https://cdn.21st.dev/assets/mirror/a8/a8cf38f65f7315f95eba8c803c4a80a9d78cb2ea36fbfee49828396e4a0b9737.jpg"
@@ -95,6 +104,11 @@ export default function Hero() {
         aria-hidden
       />
       <div className="pointer-events-none absolute inset-0 ring-1 ring-black/30" aria-hidden />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ backgroundColor: `rgb(8,11,20)`, opacity: darkOverlay }}
+        aria-hidden
+      />
       {/* top bar */}
       <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-8 py-6">
         <Image src="/logo-w.svg" alt="logo" width={22} height={22} />

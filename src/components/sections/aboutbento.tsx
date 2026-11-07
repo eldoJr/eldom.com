@@ -94,7 +94,7 @@ export default function AboutBento() {
     <section
       ref={ref as React.RefObject<HTMLElement>}
       id="about-bento"
-      className="relative z-10 bg-[#080b14] px-6 md:px-16 py-20"
+      className="relative z-10 bg-[#080b14] rounded-t-[1.5rem] px-6 md:px-16 py-20"
     >
       <div className="max-w-5xl mx-auto">
 

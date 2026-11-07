@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from "react";
 
-type Section = "Home" | "About" | "Work" | "Shorts" | "Contact";
+type Section = "Home" | "About" | "Work" | "Contact";
 
 const ctx = createContext<{
   section: Section;

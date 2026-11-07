@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useSection } from "@/lib/section";
 
-const links = ["Home", "About", "Work", "Shorts", "Contact"] as const;
+const links = ["Home", "About", "Work", "Contact"] as const;
 
 export default function menu() {
   const [open, setOpen] = useState(false);
