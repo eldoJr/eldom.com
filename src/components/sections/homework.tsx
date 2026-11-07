@@ -61,10 +61,10 @@ function ProjectCard({ i, title, category, image, preview, github, progress, ran
     <div ref={container} className="h-screen flex items-center justify-center sticky top-0">
       <motion.div
         style={{ scale, top: `calc(-4vh + ${i * 24}px)` }}
-        className="relative w-[92%] max-w-5xl rounded-2xl overflow-hidden origin-top border border-white/[0.06]"
+        className="relative w-[80%] max-w-4xl rounded-2xl overflow-hidden origin-top border border-white/[0.06]"
       >
         {/* image */}
-        <div className="relative overflow-hidden" style={{ height: "62vh" }}>
+        <div className="relative overflow-hidden" style={{ height: "52vh" }}>
           <motion.img
             src={image}
             alt={title}
@@ -143,7 +143,7 @@ export default function Work() {
       </div>
 
       {/* Stacking cards */}
-      <div ref={container}>
+      <div ref={container} className="relative">
         {PROJECTS.map((p, i) => (
           <ProjectCard
             key={i}

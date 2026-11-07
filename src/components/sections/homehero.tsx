@@ -11,24 +11,28 @@ const EASE_IN  = "cubic-bezier(0.4,0,1,1)";
 
 type SectionKey = "Home" | "About" | "Work" | "Contact";
 
-const content: Record<SectionKey, { lines: string[]; sub: string; typewords?: string[] }> = {
+const content: Record<SectionKey, { lines: string[]; sub: string; scroll: string; typewords?: string[] }> = {
   Home: {
     lines: ["Sup, I'm Eldo.", "I'm a"],
     sub: "Passionately creating innovative digital experiences, rooted in user needs.",
+    scroll: "scroll to explore",
     typewords: ["Full-Stack Developer", "AIML Enthusiast", "UI/UX Tinkerer", "Open Source Nerd", "Coffee-Driven Coder"],
   },
   About: {
     lines: ["A page about me.", "Check out"],
     sub: "If I'm not working, I'm probably thinking about my next trip. Or nerding out over games, comics, and fashion.",
+    scroll: "scroll to know about me",
     typewords: ["services I provide.", "what I've built.", "my story."],
   },
   Work: {
     lines: ["Things I've built."],
     sub: "A collection of projects, experiments, and ideas turned into reality.",
+    scroll: "scroll to explore my projects",
   },
   Contact: {
     lines: ["Let's connect."],
     sub: "Have a project in mind or just want to say hi? I'm always open to a good conversation.",
+    scroll: "scroll to get in touch",
   },
 };
 
@@ -146,18 +150,16 @@ export default function Hero() {
           </div>
         </div>
 
-        {displayed === "Home" && (
-          <div className="overflow-hidden mt-8">
-            <div data-line className="flex items-center gap-3" style={{ transform: "translateY(105%)" }}>
-              <div className="flex items-center gap-[4px]">
-                <span className="w-[2px] h-4 bg-white/40 rounded-full animate-bounce [animation-delay:0ms]" />
-                <span className="w-[2px] h-4 bg-white/60 rounded-full animate-bounce [animation-delay:150ms]" />
-                <span className="w-[2px] h-4 bg-white rounded-full animate-bounce [animation-delay:300ms]" />
-              </div>
-              <span className="text-[11px] tracking-[0.25em] uppercase text-white/60 font-medium">scroll to explore</span>
+        <div className="overflow-hidden mt-8">
+          <div data-line className="flex items-center gap-3" style={{ transform: "translateY(105%)" }}>
+            <div className="flex items-center gap-[4px]">
+              <span className="w-[2px] h-4 bg-white/40 rounded-full animate-bounce [animation-delay:0ms]" />
+              <span className="w-[2px] h-4 bg-white/60 rounded-full animate-bounce [animation-delay:150ms]" />
+              <span className="w-[2px] h-4 bg-white rounded-full animate-bounce [animation-delay:300ms]" />
             </div>
+            <span className="text-[11px] tracking-[0.25em] uppercase text-white/60 font-medium">{c.scroll}</span>
           </div>
-        )}
+        </div>
       </div>
     </section>
   );

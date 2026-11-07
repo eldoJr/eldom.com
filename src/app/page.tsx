@@ -2,6 +2,7 @@
 
 import Hero from "@/components/sections/homehero"
 import Work from "@/components/sections/homework"
+import WorkHero from "@/components/sections/workhero"
 import Experience from "@/components/sections/homeexperience"
 import AboutExperience from "@/components/sections/experience"
 import Certifications from "@/components/sections/certifications"
@@ -13,6 +14,7 @@ function TabSections() {
   const { section } = useSection()
 
   if (section === "About") return <><AboutBento /><AboutExperience /><Certifications /></>
+  if (section === "Work") return <WorkHero />
 
   // Home (default) — all home sections
   return (
