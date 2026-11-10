@@ -35,7 +35,7 @@ function Word({ word, progress, start, end, muted }: {
 
 export default function About() {
   const { ref: inViewRef, inView } = useInView(0.05)
-  const sectionRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLDivElement | null>(null)
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -45,8 +45,8 @@ export default function About() {
   return (
     <div
       ref={(el) => {
-        sectionRef.current = el as HTMLElement
-        ;(inViewRef as React.MutableRefObject<HTMLElement | null>).current = el as HTMLElement
+        sectionRef.current = el
+        ;(inViewRef as React.MutableRefObject<HTMLElement | null>).current = el
       }}
       className="relative z-10 bg-black rounded-b-[1.5rem]"
       style={{ height: "250vh" }}
