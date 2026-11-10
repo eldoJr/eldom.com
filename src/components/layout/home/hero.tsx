@@ -1,10 +1,19 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
+import ShutterText, { roles } from "./shuttertext"
 
 export default function HeroSection() {
   const ref = useRef<HTMLElement>(null)
+  const [roleIndex, setRoleIndex] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRoleIndex((i) => (i + 1) % roles.length)
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [])
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -79,6 +88,11 @@ export default function HeroSection() {
               Hey, I&apos;m Eldo. I design websites and digital products that convert, simplify, and scale.
             </p>
             <span className="hero-word">DIGITAL</span>
+          </div>
+
+          {/* Shutter role line */}
+          <div className="flex items-center justify-start ml-[2px] my-2 h-8">
+            <ShutterText text={roles[roleIndex]} />
           </div>
 
           {/* Line 3: PRODUCTS ↓ */}
