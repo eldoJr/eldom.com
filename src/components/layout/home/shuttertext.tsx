@@ -28,7 +28,7 @@ export default function ShutterText({ text }: { text: string }) {
               initial={{ opacity: 0, filter: "blur(8px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
               transition={{ delay: i * 0.05 + 0.1, duration: 0.8 }}
-              className="inline-block font-thin text-white/50"
+              className="inline-block font-light text-[#d4c5b0]/80 text-lg tracking-widest"
             >
               {char === " " ? "\u00A0" : char}
             </motion.span>

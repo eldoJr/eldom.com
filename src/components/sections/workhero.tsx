@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { useInView } from "@/lib/useinview"
 
 const WORDS = ["design.", "prototype.", "solve.", "build.", "develop.", "ship."]
@@ -116,7 +116,6 @@ export default function WorkHero() {
     if (!el) return
     el.style.setProperty("--count", String(WORDS.length))
     el.style.setProperty("--start", "35vh")
-    el.style.setProperty("--space", "30vh")
   }, [])
 
   return (
@@ -138,10 +137,10 @@ export default function WorkHero() {
           display: flex;
           align-items: start;
           width: 100%;
-          margin-bottom: var(--space, 30vh);
           font-size: clamp(3rem, 8vw, 7rem);
           font-weight: 700;
           letter-spacing: -0.03em;
+          color: #171717;
         }
         .wh-header-inner {
           display: flex;
@@ -149,6 +148,7 @@ export default function WorkHero() {
           align-items: start;
           justify-content: flex-start;
           padding-top: calc(var(--start, 35vh) - 0.5lh);
+          padding-bottom: calc(var(--start, 35vh) - 0.5lh);
           padding-left: clamp(2.5rem, 5vw, 5rem);
           gap: 0.35em;
         }
@@ -180,13 +180,10 @@ export default function WorkHero() {
           position: relative;
           z-index: 2;
           background: #202020;
-          border-radius: 1.5rem 1.5rem 0 0;
+          border-radius: 1.5rem;
         }
         .wh-reveal {
           padding: 6rem clamp(2.5rem, 5vw, 5rem) 3rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
           max-width: 1440px;
           margin: 0 auto;
         }

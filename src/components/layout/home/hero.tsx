@@ -3,17 +3,29 @@
 import { useRef, useState, useEffect } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import ShutterText, { roles } from "./shuttertext"
+import { useSection } from "@/lib/section"
+
+const sectionLabels: Record<string, string> = {
+  Home: roles[0],
+  About: "About Me",
+  Work: "My Work",
+  Contact: "Get In Touch",
+}
 
 export default function HeroSection() {
   const ref = useRef<HTMLElement>(null)
   const [roleIndex, setRoleIndex] = useState(0)
+  const { section } = useSection()
 
   useEffect(() => {
+    if (section !== "Home") return
     const interval = setInterval(() => {
       setRoleIndex((i) => (i + 1) % roles.length)
     }, 3000)
     return () => clearInterval(interval)
-  }, [])
+  }, [section])
+
+  const shutterText = section === "Home" ? roles[roleIndex] : sectionLabels[section]
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -91,14 +103,20 @@ export default function HeroSection() {
           </div>
 
           {/* Shutter role line */}
-          <div className="flex items-center justify-start ml-[2px] my-2 h-8">
-            <ShutterText text={roles[roleIndex]} />
+          <div className="flex items-center justify-start ml-[2px] my-2 h-10">
+            <ShutterText text={shutterText} />
           </div>
 
           {/* Line 3: PRODUCTS ↓ */}
           <div className="relative flex items-baseline gap-4">
             <span className="hero-word">PRODUCTS</span>
-            <span className="hero-arrow">↓</span>
+            <motion.span
+              className="hero-arrow"
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+            >
+              ↓
+            </motion.span>
           </div>
 
           {/* Mobile description */}

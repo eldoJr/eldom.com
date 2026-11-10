@@ -8,8 +8,6 @@ const hobbyImages = [
   "/images/h3.png",
   "/images/h4.png",
   "/images/h5.jpeg",
-  "/images/h6.png",
-  "/images/h8.png",
 ]
 
 export default function AboutMe() {
