@@ -2,30 +2,30 @@
 
 import { useRef, useState, useEffect } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
+import { usePathname } from "next/navigation"
 import ShutterText, { roles } from "./shuttertext"
-import { useSection } from "@/lib/section"
 
-const sectionLabels: Record<string, string> = {
-  Home: roles[0],
-  About: "About Me",
-  Work: "My Work",
-  Contact: "Get In Touch",
+const pathLabels: Record<string, string> = {
+  "/": roles[0],
+  "/about": "About Me",
+  "/work": "My Work",
+  "/contact": "Get In Touch",
 }
 
 export default function HeroSection() {
   const ref = useRef<HTMLElement>(null)
   const [roleIndex, setRoleIndex] = useState(0)
-  const { section } = useSection()
+  const pathname = usePathname()
 
   useEffect(() => {
-    if (section !== "Home") return
+    if (pathname !== "/") return
     const interval = setInterval(() => {
       setRoleIndex((i) => (i + 1) % roles.length)
     }, 3000)
     return () => clearInterval(interval)
-  }, [section])
+  }, [pathname])
 
-  const shutterText = section === "Home" ? roles[roleIndex] : sectionLabels[section]
+  const shutterText = pathname === "/" ? roles[roleIndex] : (pathLabels[pathname] ?? roles[roleIndex])
 
   const { scrollYProgress } = useScroll({
     target: ref,
