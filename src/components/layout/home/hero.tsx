@@ -1,42 +1,31 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { useRef } from "react"
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { usePathname } from "next/navigation"
-import ShutterText, { roles } from "./shuttertext"
+import ShutterText from "./shuttertext"
+import HeroGlow from "./heroglow"
 
-const pathLabels: Record<string, string> = {
-  "/": roles[0],
-  "/about": "About Me",
-  "/work": "My Work",
-  "/contact": "Get In Touch",
+const pageHeadlines: Record<string, [string, string, string]> = {
+  "/":        ["WEBSITES &", "DIGITAL", "PRODUCTS"],
+  "/about":   ["CREATIVE", "MIND", "AT WORK"],
+  "/work":    ["SELECTED", "WORK", "& CASES"],
+  "/contact": ["LET'S", "BUILD", "TOGETHER"],
 }
 
 export default function HeroSection() {
   const ref = useRef<HTMLElement>(null)
-  const [roleIndex, setRoleIndex] = useState(0)
   const pathname = usePathname()
 
-  useEffect(() => {
-    if (pathname !== "/") return
-    const interval = setInterval(() => {
-      setRoleIndex((i) => (i + 1) % roles.length)
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [pathname])
-
-  const shutterText = pathname === "/" ? roles[roleIndex] : (pathLabels[pathname] ?? roles[roleIndex])
+  const [line1, line2, line3] = pageHeadlines[pathname] ?? pageHeadlines["/"]
 
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   })
 
-  // Top bar: slide up + fade out
   const topBarY = useTransform(scrollYProgress, [0, 0.6], [0, -60])
   const topBarOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0])
-
-  // Headline: scale down + fade + slight upward drift
   const headlineScale = useTransform(scrollYProgress, [0, 0.7], [1, 0.72])
   const headlineOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
   const headlineY = useTransform(scrollYProgress, [0, 0.7], [0, -40])
@@ -44,30 +33,26 @@ export default function HeroSection() {
   return (
     <section ref={ref} className="relative z-0 flex min-h-screen w-full flex-col justify-center overflow-hidden bg-black">
 
-      {/* Avatar background */}
+      {/* Avatar background: glow → image → overlays */}
       <div className="absolute inset-0 z-0 flex justify-center items-start">
+        <HeroGlow />
         <img
           src="/images/avatar/avatar.png"
           alt=""
           className="h-full w-auto object-cover object-top opacity-30 grayscale fixed top-0"
+          style={{ zIndex: 1 }}
         />
-        {/* Ambient light glow */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          animate={{ opacity: [0.4, 0.7, 0.4] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          style={{ background: "radial-gradient(ellipse 50% 40% at 50% 35%, rgba(212,197,176,0.18) 0%, transparent 70%)" }}
-        />
-        {/* Vignette: edges fade to black */}
-        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 90% at 50% 40%, transparent 30%, black 100%)" }} />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, black 0%, transparent 15%, transparent 75%, black 100%)" }} />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, black 0%, transparent 20%, transparent 80%, black 100%)" }} />
+        <div className="absolute inset-0" style={{ zIndex: 2, background: "radial-gradient(ellipse 70% 90% at 50% 40%, transparent 30%, black 100%)" }} />
+        <div className="absolute inset-0" style={{ zIndex: 2, background: "linear-gradient(to bottom, black 0%, transparent 15%, transparent 75%, black 100%)" }} />
+        <div className="absolute inset-0" style={{ zIndex: 2, background: "linear-gradient(to right, black 0%, transparent 20%, transparent 80%, black 100%)" }} />
       </div>
+
+      {/* Top bar */}
       <motion.div
         style={{ y: topBarY, opacity: topBarOpacity }}
         className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-6"
       >
-        <img src="/logo.svg" alt="Eldo Macuacua" height={28} style={{ height: "28px", width: "auto" }} />
+        <img src="/logo.svg" alt="Eldo Macuacua" height={36} style={{ height: "36px", width: "auto" }} />
         <a
           href="mailto:eldomacuacua@gmail.com"
           className="group text-sm text-white/50 hover:text-white transition-colors duration-300 relative"
@@ -78,38 +63,39 @@ export default function HeroSection() {
       </motion.div>
 
       {/* Headline block */}
-      <motion.div
-        initial={{ y: 60, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ ease: "easeOut", duration: 0.9 }}
-        className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12"
-      >
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12">
         <motion.div
           style={{ scale: headlineScale, opacity: headlineOpacity, y: headlineY }}
           className="origin-center"
         >
-          {/* Line 1: WEBSITES & */}
-          <div className="relative flex items-baseline gap-4">
-            <span className="hero-word">WEBSITES</span>
-            <span className="hero-word">&amp;</span>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="origin-center"
+            >
+          {/* Line 1 */}
+          <div className="relative flex items-baseline">
+            <ShutterText text={line1} />
           </div>
 
-          {/* Line 2: description left + DIGITAL right */}
+          {/* Line 2 */}
           <div className="flex items-center justify-between">
-            <p className="max-w-[220px] text-sm text-white/50 leading-snug hidden md:block ml-[20%]">
-              Hey, I&apos;m Eldo. I design websites and digital products that convert, simplify, and scale.
-            </p>
-            <span className="hero-word">DIGITAL</span>
+            {pathname === "/" && (
+              <p className="max-w-[220px] text-[16px] text-white/50 leading-snug hidden md:block ml-[20%]" style={{ fontFamily: 'var(--font-jakarta)' }}>
+                Hey, I&apos;m Eldo. I design websites and digital products that convert, simplify, and scale.
+              </p>
+            )}
+            <div className="ml-auto">
+              <ShutterText text={line2} />
+            </div>
           </div>
 
-          {/* Shutter role line */}
-          <div className="flex items-center justify-start ml-[2px] my-2 h-10">
-            <ShutterText text={shutterText} />
-          </div>
-
-          {/* Line 3: PRODUCTS ↓ */}
+          {/* Line 3 */}
           <div className="relative flex items-baseline gap-4">
-            <span className="hero-word">PRODUCTS</span>
+            <ShutterText text={line3} />
             <motion.span
               className="hero-arrow"
               animate={{ y: [0, 10, 0] }}
@@ -119,12 +105,16 @@ export default function HeroSection() {
             </motion.span>
           </div>
 
-          {/* Mobile description */}
-          <p className="mt-4 max-w-xs text-sm text-white/50 leading-snug md:hidden">
-            Hey, I&apos;m Eldo. I design websites and digital products that convert, simplify, and scale.
-          </p>
+          {/* Mobile description (home only) */}
+          {pathname === "/" && (
+            <p className="mt-4 max-w-xs text-[16px] text-white/50 leading-snug md:hidden" style={{ fontFamily: 'var(--font-jakarta)' }}>
+              Hey, I&apos;m Eldo. I design websites and digital products that convert, simplify, and scale.
+            </p>
+          )}
+            </motion.div>
+          </AnimatePresence>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   )
 }

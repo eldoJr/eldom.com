@@ -63,8 +63,8 @@
 
 /* Hero */
 .hero-word {
-  font-size: clamp(3rem, 10vw, 10rem);
-  font-weight: 900;
+  font-size: clamp(3.5rem, 11vw, 11rem);
+  font-weight: 500;
   line-height: 0.9;
   letter-spacing: -0.02em;
   color: #d4c5b0;
@@ -73,8 +73,8 @@
 }
 
 .hero-arrow {
-  font-size: clamp(3rem, 8vw, 8rem);
-  font-weight: 900;
+  font-size: clamp(3.5rem, 9vw, 9rem);
+  font-weight: 500;
   color: #d4c5b0;
   line-height: 1;
 }
