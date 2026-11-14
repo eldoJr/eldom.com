@@ -41,8 +41,8 @@ export default function Focus() {
   return (
     <div
       ref={(el) => {
-        sectionRef.current = el as HTMLElement
-        ;(inViewRef as React.MutableRefObject<HTMLElement | null>).current = el as HTMLElement
+        sectionRef.current = el
+        ;(inViewRef as React.MutableRefObject<HTMLDivElement | null>).current = el
       }}
       className="relative z-10 bg-black md:h-[250vh]"
     >
