@@ -44,7 +44,7 @@ export default function Certifications() {
     <section ref={ref as React.RefObject<HTMLElement>} id="certifications" className="relative z-10 bg-white rounded-t-[1.5rem] py-24">
 
       <h2
-        className="px-10 md:px-20 text-4xl md:text-6xl font-bold tracking-tight text-neutral-900 mb-20 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[opacity,transform]"
+        className="px-6 md:px-20 text-2xl sm:text-3xl md:text-6xl font-bold tracking-tight text-neutral-900 mb-12 md:mb-20 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[opacity,transform]"
         style={{ opacity: inView ? 1 : 0, transform: inView ? "none" : "translateY(24px)" }}
       >
         Licenses &amp; Certifications<sup className="text-2xl md:text-3xl font-semibold ml-1">({certifications.length})</sup>
@@ -61,36 +61,42 @@ export default function Certifications() {
               transitionDelay: i < animatedCount ? `${i >= DEFAULT_VISIBLE ? (i - DEFAULT_VISIBLE) * 80 : 150 + i * 80}ms` : "0ms",
             }}
           >
-            <hr className="border-neutral-200 ml-10 md:ml-20" />
-            <div className="grid grid-cols-4 pl-10 md:pl-20 pr-10 md:pr-20 py-6 text-neutral-800 text-base">
-              <span className="col-span-2">{c.title}</span>
-              <span className="text-neutral-500">{c.issuer}</span>
-              <span className="flex justify-end">
-                {c.url ? (
-                  <a
-                    href={c.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-neutral-400 hover:text-neutral-900 transition-colors"
-                  >
-                    {c.type} ↗
-                  </a>
-                ) : (
-                  <span className="text-sm text-neutral-400">{c.type}</span>
-                )}
-              </span>
+            <hr className="border-neutral-200 ml-6 md:ml-20" />
+            <div className="pl-6 md:pl-20 pr-6 md:pr-20 py-5">
+              {/* Mobile layout */}
+              <div className="flex items-start justify-between gap-4 md:hidden">
+                <span className="text-neutral-800 text-sm font-medium leading-snug">{c.title}</span>
+                <span className="shrink-0 text-xs text-neutral-400">{c.type}</span>
+              </div>
+              <div className="flex items-center gap-2 mt-1 md:hidden">
+                <span className="text-xs text-neutral-500">{c.issuer}</span>
+              </div>
+              {/* Desktop layout */}
+              <div className="hidden md:grid grid-cols-4 text-neutral-800 text-base">
+                <span className="col-span-2">{c.title}</span>
+                <span className="text-neutral-500">{c.issuer}</span>
+                <span className="flex justify-end">
+                  {c.url ? (
+                    <a href={c.url} target="_blank" rel="noopener noreferrer" className="text-sm text-neutral-400 hover:text-neutral-900 transition-colors">
+                      {c.type} ↗
+                    </a>
+                  ) : (
+                    <span className="text-sm text-neutral-400">{c.type}</span>
+                  )}
+                </span>
+              </div>
             </div>
           </div>
         ))}
         <hr
-          className="border-neutral-200 ml-10 md:ml-20 transition-opacity duration-700"
+          className="border-neutral-200 ml-6 md:ml-20 transition-opacity duration-700"
           style={{ opacity: animatedCount >= visible.length ? 1 : 0, transitionDelay: `${150 + visible.length * 80}ms` }}
         />
       </div>
 
       {/* view more / less */}
       <div
-        className="px-10 md:px-20 mt-8 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+        className="px-6 md:px-20 mt-8 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
         style={{ opacity: animatedCount >= DEFAULT_VISIBLE ? 1 : 0, transitionDelay: `${150 + DEFAULT_VISIBLE * 80 + 80}ms` }}
       >
         <button

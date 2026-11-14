@@ -1,118 +1,112 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { GooeyText } from "@/components/ui/gooey-text-morphing"
+import ChessGridTransition from "@/components/ui/chess-grid-transition"
 
-const WORDS = ["Hello.", "I design.", "I build.", "I'm Eldo."]
-const MORPH_TIME = 1
-const COOLDOWN_TIME = 0.6
-// Approximate total runtime of the word sequence, used to sync the progress UI
-const DURATION = WORDS.length * (MORPH_TIME + COOLDOWN_TIME) + COOLDOWN_TIME
-
-const EASE = [0.76, 0, 0.24, 1] as const
+const TEXT = "Eldo,"
+const CHAR_INTERVAL = 130
+const HOLD = 1800
 
 export default function Intro() {
-  const [visible, setVisible] = useState(true)
-  const [progress, setProgress] = useState(0)
+  const [phase, setPhase] = useState<"intro" | "page">("intro")
+  const [gone, setGone] = useState(false)
+  const [typed, setTyped] = useState("")
+  const [cursorVisible, setCursorVisible] = useState(true)
 
-  // Lock page scroll while the intro is on screen
+  // Lock scroll during intro
   useEffect(() => {
-    if (!visible) return
-    const prev = document.body.style.overflow
     document.body.style.overflow = "hidden"
-    return () => {
-      document.body.style.overflow = prev
-    }
-  }, [visible])
-
-  // Percentage counter that follows the animation timeline
-  useEffect(() => {
-    const start = performance.now()
-    let raf: number
-    const tick = (now: number) => {
-      const p = Math.min((now - start) / (DURATION * 1000), 1)
-      setProgress(Math.round(p * 100))
-      if (p < 1) raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    return () => { document.body.style.overflow = "" }
   }, [])
 
-  const close = () => setVisible(false)
+  // Typewriter
+  useEffect(() => {
+    let i = 0
+    const id = setInterval(() => {
+      i++
+      setTyped(TEXT.slice(0, i))
+      if (i === TEXT.length) {
+        clearInterval(id)
+        // Blink cursor after done
+        let visible = true
+        const blink = setInterval(() => {
+          visible = !visible
+          setCursorVisible(visible)
+        }, 480)
+        setTimeout(() => {
+          clearInterval(blink)
+          setPhase("page")
+        }, HOLD)
+      }
+    }, CHAR_INTERVAL)
+    return () => clearInterval(id)
+  }, [])
+
+  if (gone) return null
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          role="dialog"
-          aria-label="Introduction"
-          className="fixed inset-0 z-[9999] flex flex-col justify-between overflow-hidden bg-[#0a0a0a] px-6 py-6 md:px-12 md:py-10"
-          initial={{ opacity: 1 }}
-          exit={{
-            clipPath: "inset(0 0 100% 0)",
-            transition: { duration: 0.9, ease: EASE },
-          }}
-        >
-          {/* Soft warm glow behind the words */}
+    <ChessGridTransition
+      transitionKey={phase}
+      duration={1}
+      gridSize={12}
+      color="#000000"
+      className="fixed inset-0 z-[9999]"
+      onComplete={() => setGone(true)}
+    >
+      {phase === "intro" ? (
+        <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-black">
+
+          {/* Same warm glow as the hero — makes the transition seamless */}
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[60vmin] w-[60vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#d4c5b0]/[0.06] blur-3xl"
+            className="pointer-events-none absolute"
+            style={{
+              top: "-5%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "800px",
+              height: "900px",
+              background: "radial-gradient(ellipse 50% 55% at 50% 25%, rgba(212,197,176,0.55) 0%, rgba(212,197,176,0.1) 45%, transparent 65%)",
+              filter: "blur(90px)",
+            }}
           />
 
-          {/* Top bar */}
-          <motion.header
-            className="relative flex items-center justify-between text-[10px] uppercase tracking-[0.3em] text-[#d4c5b0]/50"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
-            <span className="font-semibold text-[#d4c5b0]">Eldo Macuácua</span>
-            <button
-              type="button"
-              onClick={close}
-              className="cursor-pointer uppercase tracking-[0.3em] text-[#d4c5b0]/50 transition-colors hover:text-[#d4c5b0] focus-visible:text-[#d4c5b0] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#d4c5b0]/60"
-            >
-              Skip
-            </button>
-          </motion.header>
+          {/* Edge vignette */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{ background: "linear-gradient(to bottom, black 0%, transparent 18%, transparent 78%, black 100%)" }}
+          />
 
-          {/* Center words */}
-          <div className="relative flex flex-1 items-center justify-center" aria-live="off">
-            <GooeyText
-              texts={WORDS}
-              morphTime={MORPH_TIME}
-              cooldownTime={COOLDOWN_TIME}
-              className="h-24 w-full"
-              textClassName="text-5xl md:text-7xl lg:text-8xl font-black text-[#d4c5b0] tracking-tight"
-              onComplete={close}
+          {/* Typewriter */}
+          <h1
+            className="relative z-10 flex items-center font-black text-[#d4c5b0] select-none"
+            style={{
+              fontSize: "clamp(3.5rem, 11vw, 9rem)",
+              letterSpacing: "-0.03em",
+              lineHeight: 1,
+            }}
+          >
+            {typed}
+            <span
+              aria-hidden
+              style={{
+                display: "inline-block",
+                width: "0.06em",
+                height: "0.85em",
+                marginLeft: "0.06em",
+                background: "#d4c5b0",
+                borderRadius: "1px",
+                verticalAlign: "middle",
+                opacity: cursorVisible ? 1 : 0,
+                transition: "opacity 0.05s",
+              }}
             />
-          </div>
-
-          {/* Bottom bar */}
-          <motion.footer
-            className="relative flex flex-col gap-4"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
-            <div className="flex items-end justify-between text-[10px] uppercase tracking-[0.3em] text-[#d4c5b0]/50">
-              <span>Portfolio</span>
-              <span className="text-2xl font-black leading-none tracking-tight text-[#d4c5b0] tabular-nums md:text-4xl">
-                {String(progress).padStart(3, "0")}
-              </span>
-            </div>
-            <div className="h-px w-full bg-[#d4c5b0]/15">
-              <motion.div
-                className="h-full origin-left bg-[#d4c5b0]"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: DURATION, ease: "linear" }}
-              />
-            </div>
-          </motion.footer>
-        </motion.div>
+          </h1>
+        </div>
+      ) : (
+        <div className="h-full w-full bg-black" />
       )}
-    </AnimatePresence>
+    </ChessGridTransition>
   )
 }

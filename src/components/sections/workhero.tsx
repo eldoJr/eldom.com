@@ -180,7 +180,7 @@ export default function WorkHero() {
           position: relative;
           z-index: 2;
           background: #202020;
-          border-radius: 1.5rem;
+          border-radius: 1.5rem 1.5rem 0 0;
         }
         .wh-reveal {
           padding: 6rem clamp(2.5rem, 5vw, 5rem) 3rem;

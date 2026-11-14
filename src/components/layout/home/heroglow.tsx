@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 export default function HeroGlow() {
   return (
     <motion.div
-      className="fixed top-0 left-0 w-full h-screen pointer-events-none"
+      className="absolute inset-0 w-full h-full pointer-events-none"
       style={{ zIndex: 0 }}
       animate={{ opacity: [0.8, 1, 0.8] }}
       transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
@@ -13,13 +13,13 @@ export default function HeroGlow() {
       <div
         style={{
           position: "absolute",
-          top: "-5%",
+          top: "50%",
           left: "50%",
-          transform: "translateX(-50%)",
-          width: "800px",
-          height: "900px",
-          background: "radial-gradient(ellipse 50% 55% at 50% 25%, rgba(212,197,176,0.65) 0%, rgba(212,197,176,0.15) 45%, transparent 65%)",
-          filter: "blur(90px)",
+          transform: "translate(-50%, -50%)",
+          width: "140%",
+          height: "140%",
+          background: "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(212,197,176,0.5) 0%, rgba(212,197,176,0.1) 55%, transparent 80%)",
+          filter: "blur(140px)",
         }}
       />
     </motion.div>

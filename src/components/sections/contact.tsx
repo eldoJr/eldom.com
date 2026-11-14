@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { ArrowUpRight, Calendar } from "lucide-react"
+import { ArrowUpRight, Mail } from "lucide-react"
 import { useInView } from "@/lib/useinview"
 
 export default function Contact() {
@@ -19,7 +19,7 @@ export default function Contact() {
   }
 
   const handleBookCall = () => {
-    window.open("https://cal.com/eldo", "_blank")
+    window.location.href = "mailto:eldomacuacua@gmail.com"
   }
 
   return (
@@ -48,6 +48,9 @@ export default function Contact() {
             <h3 className="text-3xl font-light tracking-tight text-[#d4c5b0] sm:text-4xl" style={{ opacity: showSuccess ? 1 : 0, transitionDelay: "200ms" }}>
               Let&apos;s talk
             </h3>
+            <p className="mt-4 max-w-sm text-center text-sm text-[#d4c5b0]/40 leading-relaxed" style={{ opacity: showSuccess ? 1 : 0, transitionDelay: "300ms" }}>
+              I&apos;m always reachable via email. Whether you have a question, need advice, or just want to connect, I&apos;ll do my best to respond promptly. Don&apos;t hesitate to share any relevant job updates with me!
+            </p>
           </div>
 
           <button
@@ -58,7 +61,7 @@ export default function Contact() {
             style={{
               opacity: showSuccess ? 1 : 0,
               transform: showSuccess ? (isButtonHovered ? "scale(1.02)" : "scale(1)") : "translateY(15px)",
-              transitionDelay: "150ms",
+              transitionDelay: "400ms",
             }}
           >
             <div className="h-px w-12 bg-white/20 transition-all duration-500" style={{ transform: isButtonHovered ? "scaleX(0)" : "scaleX(1)", opacity: isButtonHovered ? 0 : 1 }} />
@@ -69,9 +72,9 @@ export default function Contact() {
                 backgroundColor: isButtonHovered ? "#d4c5b0" : "transparent",
               }}
             >
-              <Calendar className="size-5 transition-colors duration-500" strokeWidth={1.5} style={{ color: isButtonHovered ? "black" : "#d4c5b0" }} />
+              <Mail className="size-5 transition-colors duration-500" strokeWidth={1.5} style={{ color: isButtonHovered ? "black" : "#d4c5b0" }} />
               <span className="text-sm font-medium tracking-wide transition-colors duration-500" style={{ color: isButtonHovered ? "black" : "#d4c5b0" }}>
-                Book a call
+                Mail Me
               </span>
               <ArrowUpRight
                 className="size-5 transition-all duration-500"
@@ -96,8 +99,8 @@ export default function Contact() {
           style={{ opacity: isClicked ? 0 : 1, transform: isClicked ? "translateY(-20px)" : "none", pointerEvents: isClicked ? "none" : "auto" }}
         >
           <span className="relative flex size-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#d4c5b0] opacity-75" />
+            <span className="relative inline-flex size-2 rounded-full bg-[#d4c5b0]" />
           </span>
           <span className="text-sm font-medium tracking-widest uppercase text-[#d4c5b0]/40">Available for projects</span>
         </div>

@@ -5,7 +5,8 @@ const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-ja
 import "@/styles/globals.css";
 import Menu from "@/components/ui/menu";
 import Footer from "@/components/footer";
-import Intro from "@/components/ui/intro";
+import SmoothScroll from "@/components/ui/smooth-scroll";
+import Cursor from "@/components/ui/cursor";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -52,7 +53,8 @@ export default function layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${geist.variable} ${plusJakarta.variable}`}>
       <body>
-          <Intro />
+          <SmoothScroll />
+          <Cursor />
           {children}
           <Footer />
           <Menu />

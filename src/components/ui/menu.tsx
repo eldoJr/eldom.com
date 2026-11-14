@@ -33,12 +33,17 @@ export default function Menu() {
     <>
       {open && <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />}
 
-      <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[420px] transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[opacity,transform] ${footerVisible ? "opacity-0 translate-y-4 pointer-events-none" : "opacity-100 translate-y-0"}`}>
+      <div className={`
+        fixed bottom-6 left-1/2 -translate-x-1/2 z-50
+        w-[calc(100%-2rem)] max-w-[420px]
+        transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[opacity,transform]
+        ${footerVisible ? "opacity-0 translate-y-4 pointer-events-none" : "opacity-100 translate-y-0"}
+      `}>
         <div className="w-full rounded-2xl bg-[#0e0e0e]/90 backdrop-blur-2xl border border-[#d4c5b0]/[0.12] shadow-[0_8px_40px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(212,197,176,0.08)] overflow-hidden">
 
           {/* dropup links */}
-          <div className={`transition-[max-height,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "max-h-[300px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}>
-            <div className="flex flex-col px-6 pt-6 pb-4 gap-0.5 border-b border-[#d4c5b0]/[0.08] bg-[#d4c5b0]/[0.02]">
+          <div className={`transition-[max-height,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "max-h-[320px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"}`}>
+            <div className="flex flex-col px-6 pt-6 pb-5 gap-1">
               {links.map((link, i) => (
                 <Link
                   key={link.href}
